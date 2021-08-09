@@ -1,0 +1,17 @@
+- name: Configure Mysql
+  hosts: dbserver
+  roles:
+    - DB
+
+- name: Configure Wordpress
+  hosts: webserver
+  roles:
+    - WP
+
+  post_tasks:
+    - name: Check Web Status using uri in localhost
+      uri:
+        url: "http://{{ groups['webserver'][0] }}:{{ wp['port'] }}/wordpress"
+        status_code: 200
+        return_content: yes
+      delegate_to: localhost
